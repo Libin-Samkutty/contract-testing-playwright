@@ -2,7 +2,7 @@ name: Contract Tests
 
 on:
   pull_request:
-    branches: [mai, master]
+    branches: [main, master]
   push:
     branches: [main, master]
     tags:
@@ -50,24 +50,13 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: |
-          pip install \
-            pytest \
-            playwright \
-            pyyaml \
-            jsonschema \
-            deepdiff \
-            openapi-spec-validator
+        run: pip install -r requirements.txt
 
       - name: Install Playwright browsers
         run: playwright install chromium
 
       - name: Run contract tests
-        run: |
-          pytest tests/ \
-            -v \
-            --tb=short \
-            --junit-xml=reports/contract-test-results.xml
+        run: pytest tests/ -v --tb=short --junit-xml=reports/contract-test-results.xml
         continue-on-error: false
 
       - name: Upload test results
@@ -90,7 +79,6 @@ jobs:
   diff-check:
     name: Contract Diff Check
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: actions/checkout@v4
         with:
@@ -105,20 +93,11 @@ jobs:
         run: pip install deepdiff pyyaml
 
       - name: Diff check — OpenBreweryDB (non-breaking upgrade, should pass)
-        run: |
-          python scripts/diff_contracts.py \
-            --previous contracts/openbrewerydb/v1.0.0.yaml \
-            --current contracts/openbrewerydb/v1.1.0.yaml \
-            --output reports/diff-openbrewerydb.json \
-            --fail-on-breaking
+        run: python scripts/diff_contracts.py --previous contracts/openbrewerydb/v1.0.0.yaml --current contracts/openbrewerydb/v1.1.0.yaml --output reports/diff-openbrewerydb.json --fail-on-breaking
         continue-on-error: false
 
       - name: Diff check — Petstore v2 (intentional breaking changes, demonstrates detection)
-        run: |
-          python scripts/diff_contracts.py \
-            --previous contracts/petstore/v1.0.0.yaml \
-            --current contracts/petstore/v2.0.0.yaml \
-            --output reports/diff-petstore-breaking.json
+        run: python scripts/diff_contracts.py --previous contracts/petstore/v1.0.0.yaml --current contracts/petstore/v2.0.0.yaml --output reports/diff-petstore-breaking.json
         continue-on-error: true
 
       - name: Upload diff reports
@@ -154,11 +133,7 @@ jobs:
         continue-on-error: true
 
       - name: Generate coverage report
-        run: |
-          python scripts/coverage_report.py \
-            --spec contracts/openbrewerydb/v1.1.0.yaml \
-            --auto-discover \
-            --output reports/coverage-report.json
+        run: python scripts/coverage_report.py --spec contracts/openbrewerydb/v1.1.0.yaml --auto-discover --output reports/coverage-report.json
         continue-on-error: true
 
       - name: Upload coverage report
