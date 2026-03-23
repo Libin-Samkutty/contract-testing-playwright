@@ -283,6 +283,7 @@ def print_report(report: dict, previous_label: str, current_label: str) -> None:
 
 def save_report(report: dict, output_path: str) -> None:
     """Save the diff report as JSON."""
+    Path(output_path).parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "w") as f:
         json.dump(report, f, indent=2)
     print(f"Report saved to {output_path}")
