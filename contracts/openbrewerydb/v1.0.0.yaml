@@ -1,0 +1,118 @@
+openapi: "3.0.3"
+info:
+  title: Open Brewery DB
+  version: "1.0.0"
+servers:
+  - url: https://api.openbrewerydb.org/v1
+paths:
+  /breweries:
+    get:
+      operationId: listBreweries
+      summary: List breweries
+      parameters:
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Paginated array of breweries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Brewery"
+  /breweries/{id}:
+    get:
+      operationId: getBrewery
+      summary: Get a single brewery
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Single brewery
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Brewery"
+  /breweries/search:
+    get:
+      operationId: searchBreweries
+      summary: Search breweries
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Array of matching breweries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Brewery"
+components:
+  schemas:
+    Brewery:
+      type: object
+      required:
+        - id
+        - name
+        - brewery_type
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        brewery_type:
+          type: string
+        address_1:
+          type: string
+          nullable: true
+        address_2:
+          type: string
+          nullable: true
+        address_3:
+          type: string
+          nullable: true
+        city:
+          type: string
+        state_province:
+          type: string
+        postal_code:
+          type: string
+        country:
+          type: string
+        longitude:
+          type: string
+          nullable: true
+        latitude:
+          type: string
+          nullable: true
+        phone:
+          type: string
+          nullable: true
+        website_url:
+          type: string
+          nullable: true
+        state:
+          type: string
+        street:
+          type: string
+          nullable: true

@@ -1,0 +1,1 @@
+"""Contract testing system — validates live API responses against versioned OpenAPI schemas."""

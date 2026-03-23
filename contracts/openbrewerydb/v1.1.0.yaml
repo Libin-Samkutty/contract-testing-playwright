@@ -1,0 +1,240 @@
+openapi: 3.0.3
+info:
+  title: Open Brewery DB API
+  description: Open Brewery DB API - v1.1.0 with added search endpoint
+  version: 1.1.0
+  contact:
+    name: Open Brewery DB
+    url: https://www.openbrewerydb.org
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.openbrewerydb.org/v1
+    description: Production server
+
+paths:
+  /breweries:
+    get:
+      operationId: listBreweries
+      summary: List breweries
+      description: Returns a paginated list of breweries
+      parameters:
+        - name: per_page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 50
+            minimum: 1
+            maximum: 200
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: by_city
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: by_state
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: by_type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - micro
+              - nano
+              - regional
+              - brewpub
+              - large
+              - planning
+              - bar
+              - contract
+              - proprietor
+              - closed
+        - name: by_country
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: sort
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of breweries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Brewery'
+
+  /breweries/{id}:
+    get:
+      operationId: getBreweryById
+      summary: Get a single brewery
+      description: Returns a single brewery by its ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A single brewery
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Brewery'
+        '404':
+          description: Brewery not found
+
+  /breweries/search:
+    get:
+      operationId: searchBreweries
+      summary: Search breweries
+      description: Search breweries by query string (added in v1.1.0)
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: per_page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 50
+            minimum: 1
+            maximum: 200
+      responses:
+        '200':
+          description: A list of matching breweries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Brewery'
+
+  /breweries/random:
+    get:
+      operationId: getRandomBrewery
+      summary: Get random breweries
+      description: Returns a random selection of breweries
+      parameters:
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+      responses:
+        '200':
+          description: A list of random breweries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Brewery'
+
+components:
+  schemas:
+    Brewery:
+      type: object
+      required:
+        - id
+        - name
+        - brewery_type
+      properties:
+        id:
+          type: string
+          description: Unique identifier
+        name:
+          type: string
+          description: Name of the brewery
+        brewery_type:
+          type: string
+          description: Type of brewery
+          enum:
+            - micro
+            - nano
+            - regional
+            - brewpub
+            - large
+            - planning
+            - bar
+            - contract
+            - proprietor
+            - closed
+        address_1:
+          type: string
+          nullable: true
+          description: Street address
+        address_2:
+          type: string
+          nullable: true
+        address_3:
+          type: string
+          nullable: true
+        city:
+          type: string
+          nullable: true
+          description: City
+        state_province:
+          type: string
+          nullable: true
+          description: State or province
+        postal_code:
+          type: string
+          nullable: true
+          description: Postal or zip code
+        country:
+          type: string
+          nullable: true
+          description: Country
+        longitude:
+          nullable: true
+          description: Longitude (numeric string, float, or null)
+          oneOf:
+            - type: string
+            - type: number
+        latitude:
+          nullable: true
+          description: Latitude (numeric string, float, or null)
+          oneOf:
+            - type: string
+            - type: number
+        phone:
+          type: string
+          nullable: true
+          description: Phone number
+        website_url:
+          type: string
+          nullable: true
+          description: Website URL
+        state:
+          type: string
+          nullable: true
+          description: State (US only)
+        street:
+          type: string
+          nullable: true
+          description: Street address
