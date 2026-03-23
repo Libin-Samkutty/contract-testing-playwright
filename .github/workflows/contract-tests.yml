@@ -56,7 +56,7 @@ jobs:
         run: playwright install chromium
 
       - name: Run contract tests
-        run: pytest tests/ -v --tb=short --junit-xml=reports/contract-test-results.xml
+        run: mkdir -p reports && pytest tests/ -v --tb=short --junit-xml=reports/contract-test-results.xml
         continue-on-error: false
 
       - name: Upload test results
